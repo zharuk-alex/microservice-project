@@ -1,1 +1,1 @@
-# Навчальний проєкт в межах курсу "DevOps CI/CD
+# Add Dockerized Django project with PostgreSQL and Nginx
