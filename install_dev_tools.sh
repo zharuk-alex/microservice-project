@@ -23,7 +23,6 @@ else
   echo "Docker Compose already installed"
 fi
 
-# Python 3.9+
 if ! python3 --version | grep -q '3\.[9-9]\|[1-9][0-9]'; then
   echo "Install Python 3.9+..."
   sudo apt-get install -y python3 python3-pip
@@ -38,10 +37,9 @@ else
   echo "pip3 already installed"
 fi
 
-# Django
 if ! python3 -m django --version &> /dev/null; then
   echo "Install Django..."
-  pip3 install --user django
+  sudo apt-get install -y python3-django
 else
   echo "Django already installed"
 fi
