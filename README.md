@@ -43,3 +43,9 @@ Destroy resources:
 ```
 terraform destroy
 ```
+
+#### modules:
+
+- s3-backend: creates an S3 bucket for storing the tfstate file and a DynamoDB table for state locking.
+- vpc: builds a virtual network (VPC) with subnets, gateway, and routing.
+- ecr: creates a repository for Docker container images and enables image scanning.
