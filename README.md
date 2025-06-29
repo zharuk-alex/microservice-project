@@ -2,6 +2,7 @@
 
 ```
 git clone https://github.com/zharuk-alex/microservice-project.git
+git checkout lesson-5
 ```
 
 Init Terraform:
