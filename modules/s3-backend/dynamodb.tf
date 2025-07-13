@@ -1,4 +1,3 @@
-# Створюємо DynamoDB-таблицю для блокування стейтів
 resource "aws_dynamodb_table" "terraform_locks" {
   name         = var.table_name
   billing_mode = "PAY_PER_REQUEST"
