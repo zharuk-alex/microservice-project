@@ -1,0 +1,12 @@
+image:
+  repository: 998698767918.dkr.ecr.eu-central-1.amazonaws.com/goit-ecr
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  # type: ClusterIP
+  type: LoadBalancer
+  port: 8000
+
+ingress:
+  enabled: false

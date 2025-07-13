@@ -16,3 +16,30 @@ crash.log
 
 *.auto.tfvars
 *.tfvars
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+
+# Env files
+.env
+.env.*
+
+# Django
+db.sqlite3
+media/
+staticfiles/
+*.pot
+*.pyc
+*.pyo
+
+# Docker
+*.db
+docker-compose.override.yml
+
+# Logs
+logs/
