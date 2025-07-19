@@ -1,45 +1,39 @@
-.DS_Store
-.idea/
-.vscode/
-*.swp
+# .env
+.env
+*.env
 
-terraform.tfstate
-terraform.tfstate.*
+# Terraform
 .terraform/
+*.tfstate
+*.tfstate.*
 .terraform.lock.hcl
-
 crash.log
 *.tfplan
-*.log
+*.tfstate.backup
 
-*.backup
+# VSCode, IDE
+.vscode/
+.idea/
+*.swp
 
-*.auto.tfvars
-*.tfvars
-
-# Python
+# Python/Django
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 *.egg-info/
-*.egg
-
-# Env files
 .env
-.env.*
-
-# Django
-db.sqlite3
-media/
-staticfiles/
-*.pot
-*.pyc
-*.pyo
+venv/
+env/
 
 # Docker
-*.db
-docker-compose.override.yml
+*.log
 
-# Logs
-logs/
+# Helm
+charts/**/.DS_Store
+charts/**/tmp/
+charts/**/test/
+
+# OS
+.DS_Store
+Thumbs.db
