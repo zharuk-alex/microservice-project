@@ -99,6 +99,12 @@ module "rds" {
   use_aurora                 = false
   aurora_instance_count      = 2
 
+  # --- Aurora-only ---
+  engine_cluster             = "aurora-postgresql"
+  engine_version_cluster     = "15.3"
+  parameter_group_family_aurora = "aurora-postgresql15"
+  
+
   # --- RDS-only ---
   engine                     = "postgres"
   engine_version             = "17.2"
@@ -110,7 +116,6 @@ module "rds" {
   db_name                    = "myapp"
   username                   = "postgres"
   password                   = "admin123AWS23"
-  # password                   = var.db_password
   subnet_private_ids         = module.vpc.private_subnets
   subnet_public_ids          = module.vpc.public_subnets
   publicly_accessible        = true
@@ -126,4 +131,6 @@ module "rds" {
     Environment = "dev"
     Project     = "myapp"
   }
-} 
+}
+
+
