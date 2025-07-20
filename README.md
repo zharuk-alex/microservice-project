@@ -100,6 +100,17 @@ kubectl get svc my-django-release-django
 
 ---
 
+оновлення контексту
+aws eks --region eu-central-1 update-kubeconfig --name goit-eks-cluster
+перевірка argo_cd
+kubectl get pods -n argocd
+• Логін — admin
+• Пароль отримати так:
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
+
+EXTERNAL-IP
+kubectl get svc -n argocd
+
 ## 7. Delete resources
 
 ```sh

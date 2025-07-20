@@ -11,35 +11,39 @@ spec:
   serviceAccountName: jenkins-sa
   containers:
     - name: kaniko
-      image: gcr.io/kaniko-project/executor:latest
+      image: gcr.io/kaniko-project/executor:v1.16.0-debug
       imagePullPolicy: Always
       command:
-        - cat
-      tty: true
+        - sleep
+      args:
+        - 99d
     - name: git
       image: alpine/git
       command:
-        - cat
-      tty: true
+        - sleep
+      args:
+        - 99d
 """
     }
   }
 
   environment {
-    AWS_REGION         = "eu-central-1"
-    AWS_DEFAULT_REGION = "eu-central-1"
-    IMAGE_TAG          = "${env.BUILD_NUMBER}"
+    IMAGE_NAME   = "app"
+    IMAGE_TAG    = "${env.BUILD_NUMBER}"
+    // ECR_REGISTRY визначимо динамічно
   }
+
 
   stages {
     stage('Get ECR Repo URL') {
       steps {
         script {
-          env.ECR_REPO = sh(
-            script: "terraform output -raw module.ecr.ecr_repository_url",
+          def repo = sh(
+            script: "terraform output -raw ecr_repository_url",
             returnStdout: true
           ).trim()
-          env.REGISTRY = env.ECR_REPO.split('/')[0]
+          env.ECR_REGISTRY = repo.split('/')[0]
+          env.FULL_REPO    = repo
         }
       }
     }
@@ -47,38 +51,35 @@ spec:
     stage('Build & Push Docker Image') {
       steps {
         container('kaniko') {
-          withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
-            sh '''
-              export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-              export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-              export AWS_REGION=$AWS_REGION
-              export AWS_DEFAULT_REGION=$AWS_REGION
-              aws ecr get-login-password --region $AWS_REGION | \
-                docker login --username AWS --password-stdin $REGISTRY
-              /kaniko/executor \
-                --context ${WORKSPACE}/charts/django-app \
-                --dockerfile ${WORKSPACE}/charts/django-app/Dockerfile \
-                --destination $REGISTRY/$ECR_REPO:$IMAGE_TAG \
-                --cache=true
-            '''
-          }
+          sh '''
+            /kaniko/executor \
+              --context `pwd` \
+              --dockerfile `pwd`/Dockerfile \
+              --destination=$ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG \
+              --cache=true \
+              --insecure \
+              --skip-tls-verify
+          '''
         }
       }
     }
 
-    stage('Update Helm values.yaml') {
+    stage('Update Chart Tag in Git') {
       steps {
         container('git') {
-          sshagent(credentials: ['git-ssh-key']) {
+          withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PAT')]) {
             sh '''
-              git clone git@github.com:zharuk-alex/microservice-project.git
-              cd microservice-project/charts/django-app
-              sed -i "s/^  tag: .*/  tag: '$IMAGE_TAG'/" values.yaml
-              git config user.email "jenkins@ci.local"
-              git config user.name "Jenkins"
+              git clone https://$GIT_USERNAME:$GIT_PAT@github.com/zharuk-alex/microservice-project.git
+              cd goit-devops/django-chart
+
+              sed -i "s/tag: .*/tag: $IMAGE_TAG/" values.yaml
+
+              git config user.email "$COMMIT_EMAIL"
+              git config user.name "$COMMIT_NAME"
+
               git add values.yaml
-              git commit -m "Update image tag to $IMAGE_TAG [ci skip]"
-              git push origin lesson-8
+              git commit -m "Update image tag to $IMAGE_TAG"
+              git push origin main
             '''
           }
         }
