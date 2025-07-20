@@ -1,38 +1,28 @@
-Django Application
+# Django Application Deployment
 
-# Installation
+Deploy Django app with **Terraform**, **AWS EKS**, **ECR**, **Helm**, and **Argo CD**.
+
+---
 
 ## 1. Clone the repository
 
 ```sh
 git clone https://github.com/zharuk-alex/microservice-project.git
-git checkout lesson-7
+cd microservice-project
+git checkout lesson-10
 ```
 
-## 2. Initialize Terraform and deploy infrastructure
+---
+
+## 2. Deploy infrastructure (Terraform)
 
 ```sh
 terraform init
 terraform apply
 ```
 
-### (Optional) Connect to S3 backend for state storage:
-
-1. Uncomment the block in `backend.tf`:
-
-```hcl
-terraform {
-  backend "s3" {
-    bucket         = "terraform-state-bucket-goit"
-    key            = "goit/terraform.tfstate"
-    region         = "eu-central-1"
-    dynamodb_table = "terraform-locks"
-    encrypt        = true
-  }
-}
-```
-
-2. Reinitialize terraform:
+Optional: Use S3 as backend  
+Uncomment block in `backend.tf`, then:
 
 ```sh
 terraform init -reconfigure
@@ -40,7 +30,7 @@ terraform plan
 terraform apply
 ```
 
-3. Check the state of all resources:
+Check resources:
 
 ```sh
 terraform state list
@@ -48,31 +38,31 @@ terraform state list
 
 ---
 
-## 3. Connect to the Kubernetes cluster
+## 3. Connect to EKS cluster
 
 ```sh
-aws eks --region <your-region> update-kubeconfig --name <cluster-name>
+aws eks --region eu-central-1 update-kubeconfig --name goit-eks-cluster
 kubectl get nodes
-kubectl get pods
 ```
 
 ---
 
-## 4. Build and push Docker image to ECR
+## 4. Build & push Docker image to ECR
 
 ```sh
 docker buildx build --platform linux/amd64 --no-cache -t django-app:latest .
 
-docker tag django-app:latest <aws_account_id>.dkr.ecr.<region>.amazonaws.com/goit-ecr:latest
+docker tag django-app:latest <aws_account_id>.dkr.ecr.eu-central-1.amazonaws.com/goit-ecr:latest
 
-aws ecr get-login-password --region <region> | docker login --username AWS --password-stdin <aws_account_id>.dkr.ecr.<region>.amazonaws.com
+aws ecr get-login-password --region eu-central-1 \
+| docker login --username AWS --password-stdin <aws_account_id>.dkr.ecr.eu-central-1.amazonaws.com
 
-docker push <aws_account_id>.dkr.ecr.<region>.amazonaws.com/goit-ecr:latest
+docker push <aws_account_id>.dkr.ecr.eu-central-1.amazonaws.com/goit-ecr:latest
 ```
 
 ---
 
-## 5. Deploy Django application to Kubernetes via Helm
+## 5. Deploy Django app via Helm
 
 ```sh
 cd charts/django-app
@@ -83,45 +73,82 @@ helm upgrade --install my-django-release .
 
 ## 6. Access the application
 
-1. Find out the external DNS name (External IP/Hostname):
-
 ```sh
 kubectl get svc my-django-release-django
 ```
 
-2. Open in your browser:
-   ```
-   http://<EXTERNAL-IP>:8000
-   ```
-   or for AWS LoadBalancer:
-   ```
-   http://<EXTERNAL-HOSTNAME>:8000
-   ```
+- Open: `http://<EXTERNAL-IP>:8000`  
+  or `http://<EXTERNAL-HOSTNAME>:8000`
 
 ---
 
-оновлення контексту
-aws eks --region eu-central-1 update-kubeconfig --name goit-eks-cluster
-перевірка argo_cd
-kubectl get pods -n argocd
-• Логін — admin
-• Пароль отримати так:
-kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
+## 7.Verify Jenkins
 
-EXTERNAL-IP
-kubectl get svc -n argocd
-
-## 7. Delete resources
+Check Jenkins pod status:
 
 ```sh
-terraform destroy
+kubectl get pods -n jenkins
+```
+
+Get Jenkins service endpoint:
+
+```sh
+kubectl get svc -n jenkins
+```
+
+Get Jenkins admin password:
+
+```sh
+kubectl get secret jenkins -n jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 -d && echo
+```
+
+Login in browser:
+
+```
+http://<EXTERNAL-IP>
+```
+
+Username: `admin`  
+Password: _(from command above)_
+
+---
+
+---
+
+## 8. Access Argo CD
+
+```sh
+kubectl get pods -n argocd
+kubectl get svc -n argocd
+```
+
+Get Argo admin password:
+
+```sh
+kubectl -n argocd get secret argocd-initial-admin-secret \
+-o jsonpath="{.data.password}" | base64 -d && echo
+```
+
+- Login: `admin`
+- URL: `http://<ARGOCD-EXTERNAL-IP>`
+
+---
+
+## 9. Verify RDS database (Aurora / PostgreSQL / etc.)
+
+Check if the RDS instance is created and available:
+
+```sh
+aws rds describe-db-instances \
+  --region eu-central-1 \
+  --query "DBInstances[*].{ID:DBInstanceIdentifier,Status:DBInstanceStatus,Endpoint:Endpoint.Address}" \
+  --output table
 ```
 
 ---
 
-#### modules:
+## 10. Destroy infrastructure
 
-- **s3-backend:** creates an S3 bucket for tfstate and DynamoDB for state locking.
-- **vpc:** builds a VPC with subnets, gateway, and routing.
-- **ecr:** creates a repository for Docker images and enables image scanning.
-- **eks:** creates a Kubernetes cluster (EKS) and associated roles/authorization.
+```sh
+terraform destroy
+```

@@ -30,7 +30,7 @@ spec:
   environment {
     IMAGE_NAME   = "app"
     IMAGE_TAG    = "${env.BUILD_NUMBER}"
-    // ECR_REGISTRY визначимо динамічно
+    // ECR_REGISTRY = ""
   }
 
 
