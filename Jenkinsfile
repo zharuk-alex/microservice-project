@@ -79,7 +79,7 @@ spec:
 
               git add values.yaml
               git commit -m "Update image tag to $IMAGE_TAG"
-              git push origin main
+              git push origin lesson-9
             '''
           }
         }

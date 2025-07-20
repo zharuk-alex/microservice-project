@@ -5,7 +5,7 @@ applications:
     source:
       repoURL: https://github.com/zharuk-alex/my-microservice-project.git
       path: charts/django-app
-      targetRevision: main
+      targetRevision: lesson-9
       # targetRevision: lesson-9
       helm:
         valueFiles:
