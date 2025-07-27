@@ -86,16 +86,13 @@ spec:
           withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PAT')]) {
             sh '''
               set -e
-              git clone --branch django-app https://$GIT_USERNAME:$GIT_PAT@github.com/zharuk-alex/microservice-project.git
+              git clone https://${GIT_USERNAME}:${GIT_PAT}@github.com/zharuk-alex/microservice-project.git
               cd microservice-project/charts/django-app
-
-              sed -i "s/tag: .*/tag: $IMAGE_TAG/" values.yaml
-
-              git config user.email "$COMMIT_EMAIL"
-              git config user.name "$COMMIT_NAME"
-
+              sed -i 's/tag: .*/tag: 7/' values.yaml
+              git config user.email jenkins@example.com
+              git config user.name "Jenkins Bot"
               git add values.yaml
-              git commit -m "Update image tag to $IMAGE_TAG"
+              git commit -m "Update image tag to 7"
               git push origin django-app
             '''
           }
