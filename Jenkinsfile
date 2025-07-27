@@ -50,7 +50,7 @@ spec:
           script {
             sh 'terraform init -input=false -no-color'
 
-            def repo = sh(script: "terraform output -raw ecr_repository_url", returnStdout: true).trim()
+            def repo = sh(script: "terraform output -raw repository_url", returnStdout: true).trim()
 
             env.ECR_REGISTRY = repo.split('/')[0]
             env.FULL_REPO    = repo
