@@ -35,8 +35,10 @@ spec:
   }
 
   environment {
-    IMAGE_NAME   = "goit-ecr"
-    IMAGE_TAG    = "${env.BUILD_NUMBER}"
+      IMAGE_NAME   = "goit-ecr"
+      IMAGE_TAG    = "${env.BUILD_NUMBER}"
+      COMMIT_NAME  = "Jenkins Bot"
+      COMMIT_EMAIL = "jenkins@example.com"
     // ECR_REGISTRY = ""
   }
 
@@ -84,8 +86,8 @@ spec:
         container('git') {
           withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PAT')]) {
             sh '''
-              git clone https://$GIT_USERNAME:$GIT_PAT@github.com/zharuk-alex/microservice-project.git
-              cd goit-devops/django-chart
+              git clone https://$GIT_USERNAME:$GIT_PAT@github.com/zharuk-alex/microservice-project.git project
+              cd project/charts/django-app
 
               sed -i "s/tag: .*/tag: $IMAGE_TAG/" values.yaml
 
@@ -94,7 +96,7 @@ spec:
 
               git add values.yaml
               git commit -m "Update image tag to $IMAGE_TAG"
-              git push origin lesson-9
+              git push origin django-app
             '''
           }
         }
