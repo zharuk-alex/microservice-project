@@ -81,22 +81,21 @@ spec:
     }
 
     stage('Update Chart Tag in Git') {
-      steps {
-        container('git') {
-          withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PAT')]) {
-            sh '''
-              set -e
-              git clone https://${GIT_USERNAME}:${GIT_PAT}@github.com/zharuk-alex/microservice-project.git
-              ls -R microservice-project
-              cd microservice-project/charts/django-app
-              sed -i 's/tag: .*/tag: 7/' values.yaml
-              git config user.email jenkins@example.com
-              git config user.name "Jenkins Bot"
-              git add values.yaml
-              git commit -m "Update image tag to 7"
-              git push origin django-app
-            '''
-          }
+      container('git') {
+        withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PAT')]) {
+          sh '''
+            set -e
+            git clone --single-branch --branch django-app https://${GIT_USERNAME}:${GIT_PAT}@github.com/zharuk-alex/microservice-project.git
+            ls -R microservice-project
+            cd microservice-project/charts/django-app
+
+            sed -i "s/tag: .*/tag: ${BUILD_NUMBER}/" values.yaml
+
+            git config user.email "jenkins@example.com"
+            git config user.name "Jenkins CI"
+            git commit -am "ci: update image tag to ${BUILD_NUMBER}"
+            git push
+          '''
         }
       }
     }
