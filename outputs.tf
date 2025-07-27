@@ -58,10 +58,5 @@ output "jenkins_namespace" {
 }
 
 output "ecr_repository_url" {
-  description = "URL of the ECR repository (from module)"
-  value       = module.ecr.repository_url
-}
-
-output "repository_url" {
   value = module.ecr.repository_url
 }

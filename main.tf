@@ -132,5 +132,3 @@ module "rds" {
     Project     = "myapp"
   }
 }
-
-
