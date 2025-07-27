@@ -23,12 +23,19 @@ spec:
         - sleep
       args:
         - 99d
+    - name: terraform
+      image: hashicorp/terraform:1.8.3
+      imagePullPolicy: Always
+      command:
+        - sleep
+      args:
+        - 99d
 """
     }
   }
 
   environment {
-    IMAGE_NAME   = "app"
+    IMAGE_NAME   = "goit-ecr"
     IMAGE_TAG    = "${env.BUILD_NUMBER}"
     // ECR_REGISTRY = ""
   }
@@ -37,13 +44,18 @@ spec:
   stages {
     stage('Get ECR Repo URL') {
       steps {
-        script {
-          def repo = sh(
-            script: "terraform output -raw ecr_repository_url",
-            returnStdout: true
-          ).trim()
-          env.ECR_REGISTRY = repo.split('/')[0]
-          env.FULL_REPO    = repo
+        container('terraform') {
+          script {
+            sh 'terraform -chdir=modules/ecr init -input=false'
+
+            def repo = sh(
+              script: "terraform -chdir=modules/ecr output -raw repository_url",
+              returnStdout: true
+            ).trim()
+
+            env.ECR_REGISTRY = repo.split('/')[0]
+            env.FULL_REPO    = repo
+          }
         }
       }
     }
@@ -53,11 +65,14 @@ spec:
         container('kaniko') {
           sh '''
             /kaniko/executor \
-              --context `pwd` \
-              --dockerfile `pwd`/Dockerfile \
+              --context=dir://$(pwd)/charts/django-app \
+              --dockerfile=$(pwd)/charts/django-app/Dockerfile \
               --destination=$ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG \
               --cache=true \
-              --insecure \
+              --reproducible \
+              --single-snapshot \
+              --snapshotMode=redo \
+              --skip-tls-verify-pull \
               --skip-tls-verify
           '''
         }
