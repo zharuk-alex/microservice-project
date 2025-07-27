@@ -61,7 +61,7 @@ controller:
                       url('https://github.com/zharuk-alex/microservice-project.git')
                       credentials('github-token')
                     }
-                    branches('*/lesson-9')
+                    branches('*/django-app')
                   }
                 }
                 steps {
@@ -76,7 +76,7 @@ controller:
                                   url("https://github.com/zharuk-alex/microservice-project.git")
                                   credentials("github-token")
                                 }
-                                branches('*/lesson-9')
+                                branches('*/django-app')
                               }
                             }
                           }
