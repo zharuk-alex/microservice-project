@@ -93,10 +93,15 @@ spec:
 
               git clone --single-branch --branch django-app https://${env.GIT_USERNAME}:${env.GIT_PAT}@github.com/zharuk-alex/microservice-project.git
               cd microservice-project/charts/django-app
-              sed -i 's/tag: .*/tag: ${BUILD_NUMBER}/' values.yaml
+              sed -i "s|tag: .*|tag: $IMAGE_TAG|" values.yaml
+              grep -q 'pullSecrets:' values.yaml || echo -e "  pullSecrets:\\n    - name: aws-ecr-creds" >> values.yaml
+
+              git config user.email "$COMMIT_EMAIL"
+              git config user.name "$COMMIT_NAME"
+              
               git add values.yaml
-              git commit -m 'ci: update image tag to ${BUILD_NUMBER}'
-              git push
+              git commit -m "Update image tag to $IMAGE_TAG"
+              git push origin django-app
             """
           }
         }
