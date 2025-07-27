@@ -87,11 +87,15 @@ spec:
             script {
               def repo_url = "https://${env.GIT_USERNAME}:${env.GIT_PAT}@github.com/zharuk-alex/microservice-project.git"
               sh """
-                git clone --single-branch --branch django-app ${repo_url}
+                git config --global credential.helper store
+                git config --global user.email "jenkins@example.com"
+                git config --global user.name "Jenkins CI"
+
+                echo "https://${GIT_USERNAME}:${GIT_PAT}@github.com" > ~/.git-credentials
+
+                git clone --single-branch --branch django-app https://github.com/zharuk-alex/microservice-project.git
                 cd microservice-project/charts/django-app
                 sed -i 's/tag: .*/tag: ${BUILD_NUMBER}/' values.yaml
-                git config user.email jenkins@example.com
-                git config user.name 'Jenkins CI'
                 git add values.yaml
                 git commit -m 'ci: update image tag to ${BUILD_NUMBER}'
                 git push
