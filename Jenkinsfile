@@ -49,10 +49,13 @@ spec:
         container('terraform') {
           script {
             sh 'terraform init -input=false -no-color'
+            
             def ECR_REPO = '998698767918.dkr.ecr.eu-central-1.amazonaws.com/goit-ecr'
-            env.ECR_REGISTRY = repo.split('/')[0]
-            env.FULL_REPO    = repo
-            echo "Fetched ECR_REPO: ${env.FULL_REPO}"
+            
+            env.ECR_REGISTRY = ECR_REPO.split('/')[0]
+            env.FULL_REPO    = ECR_REPO
+
+            echo "✅ Fetched ECR_REPO: ${env.FULL_REPO}"
           }
         }
       }
