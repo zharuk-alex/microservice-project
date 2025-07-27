@@ -85,7 +85,7 @@ spec:
         container('git') {
           withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PAT')]) {
             script {
-              def repo_url = "https://${GIT_USERNAME}:${GIT_PAT}@github.com/zharuk-alex/microservice-project.git"
+              def repo_url = "https://${env.GIT_USERNAME}:${env.GIT_PAT}@github.com/zharuk-alex/microservice-project.git"
               sh """
                 git clone --single-branch --branch django-app ${repo_url}
                 cd microservice-project/charts/django-app
