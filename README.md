@@ -47,7 +47,7 @@ kubectl get nodes
 
 ---
 
-## 4. Build & push Docker image to ECR
+## 4. Build & push Docker image to ECR (optional, if not using Jenkins)
 
 ```sh
 docker buildx build --platform linux/amd64 --no-cache -t django-app:latest .
@@ -71,7 +71,7 @@ helm upgrade --install my-django-release .
 
 ---
 
-## 6. Access the application
+## 6. Access the application (optional if using Argo CD with auto-sync)
 
 ```sh
 kubectl get svc my-django-release-django
@@ -221,6 +221,18 @@ terraform output
 ```
 
   <img src="demo_screenshots/terraform_1.webp" width="600"/>
+</details>
+
+<details>
+  <summary>django</summary>
+
+```sh
+kubectl get svc -n default
+kubectl port-forward svc/microservice-app-django 8000:8000
+```
+
+  <img src="demo_screenshots/django_1.webp" width="600"/>
+  <img src="demo_screenshots/django_2.webp" width="600"/>
 </details>
 
 <details>
