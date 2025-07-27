@@ -1,6 +1,6 @@
 image:
   repository: 998698767918.dkr.ecr.eu-central-1.amazonaws.com/goit-ecr
-  tag: 21
+  tag: 1
   pullPolicy: IfNotPresent
 
 service:
