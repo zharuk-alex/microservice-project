@@ -13,7 +13,7 @@ spec:
         app: {{ .Release.Name }}-django
     spec:
       imagePullSecrets:
-        - name: ecr-secret   # <--- додано ось це
+        - name: ecr-secret  
       containers:
         - name: django
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
