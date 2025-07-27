@@ -214,11 +214,45 @@ terraform destroy
 ## Screenshots:
 
 <details>
+  <summary>terraform</summary>
+
+```sh
+terraform output
+```
+
+  <img src="demo_screenshots/terraform_1.webp" width="600"/>
+</details>
+
+<details>
   <summary>jenkins</summary>
 
-```yaml
+```sh
 kubectl get all -n jenkins
 ```
 
-  <img src="demo_screenshots/jenkins.png" alt="Kube-state-metrics в Prometheus" width="600"/>
+  <img src="demo_screenshots/jenkins_1.webp" width="600"/>
+  <img src="demo_screenshots/jenkins_2.webp" width="600"/>
+</details>
+
+<details>
+  <summary>argocd</summary>
+
+```sh
+kubectl get all -n argocd
+```
+
+  <img src="demo_screenshots/argocd_1.webp" width="600"/>
+  <img src="demo_screenshots/argocd_2.webp" width="600"/>
+</details>
+
+<details>
+  <summary>monitoring</summary>
+
+```sh
+kubectl get all -n monitoring
+```
+
+  <img src="demo_screenshots/monitoring_1.webp" width="600"/>
+  <img src="demo_screenshots/monitoring_2.webp" width="600"/>
+  <img src="demo_screenshots/monitoring_3.webp" width="600"/>
 </details>
