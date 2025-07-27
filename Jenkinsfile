@@ -87,6 +87,7 @@ spec:
             sh '''
               set -e
               git clone https://${GIT_USERNAME}:${GIT_PAT}@github.com/zharuk-alex/microservice-project.git
+              ls -R microservice-project
               cd microservice-project/charts/django-app
               sed -i 's/tag: .*/tag: 7/' values.yaml
               git config user.email jenkins@example.com
