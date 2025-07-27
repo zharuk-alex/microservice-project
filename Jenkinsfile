@@ -48,15 +48,16 @@ spec:
       steps {
         container('terraform') {
           script {
-            sh 'terraform -chdir=modules/ecr init -input=false'
+            sh 'terraform init -input=false -no-color'
 
             def repo = sh(
-              script: "terraform -chdir=modules/ecr output -raw repository_url",
+              script: "terraform output -no-color -raw repository_url | tr -d '%'",
               returnStdout: true
             ).trim()
 
             env.ECR_REGISTRY = repo.split('/')[0]
             env.FULL_REPO    = repo
+            echo "✅ Fetched ECR_REPO: ${env.FULL_REPO}"
           }
         }
       }
