@@ -12,6 +12,8 @@ spec:
       labels:
         app: {{ .Release.Name }}-django
     spec:
+      imagePullSecrets:
+        - name: ecr-secret   # <--- додано ось це
       containers:
         - name: django
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -21,4 +23,3 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-config
-
