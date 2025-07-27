@@ -42,10 +42,10 @@ module "eks" {
   cluster_name    = "goit-eks-cluster"       
   subnet_ids      = module.vpc.public_subnets
   # instance_type   = "t2.micro"               
-  instance_type   = "t3.medium"               
-  desired_size    = 2                        
-  max_size        = 2                        
-  min_size        = 1                        
+  instance_type   = "t3.small"            
+  desired_size    = 3
+  max_size        = 4
+  min_size        = 2                      
 }
 
 data "aws_eks_cluster" "eks" {

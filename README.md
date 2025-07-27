@@ -147,8 +147,50 @@ aws rds describe-db-instances \
 
 ---
 
+## 10. Prometheus
+
+````
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+kubectl create namespace monitoring
+helm install prometheus prometheus-community/prometheus \
+  --namespace monitoring
+```
+
+check if Prometheus installed:
+```
+kubectl get pods -n monitoring
+```
+
+Prometeus Gui:
+```
+kubectl port-forward -n monitoring svc/prometheus-server 9090:80
+```
+
+## 11. Grafana:
+```
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+
+helm install grafana grafana/grafana \
+  --namespace monitoring \
+  --create-namespace \
+  --set adminPassword=admin123
+```
+
+get generated password
+```
+kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode
+```
+
+Grafana Gui:
+```
+kubectl port-forward svc/grafana 3000:80 -n monitoring
+```
+---
+
 ## 10. Destroy infrastructure
 
 ```sh
 terraform destroy
-```
+````
