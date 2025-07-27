@@ -55,7 +55,7 @@ spec:
             env.ECR_REGISTRY = ECR_REPO.split('/')[0]
             env.FULL_REPO    = ECR_REPO
 
-            echo "✅ Fetched ECR_REPO: ${env.FULL_REPO}"
+            echo "Fetched ECR_REPO: ${env.FULL_REPO}"
           }
         }
       }
@@ -85,8 +85,8 @@ spec:
         container('git') {
           withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PAT')]) {
             sh '''
-              git clone https://$GIT_USERNAME:$GIT_PAT@github.com/zharuk-alex/microservice-project.git project
-              cd project/charts/django-app
+              git clone https://$GIT_USERNAME:$GIT_PAT@github.com/zharuk-alex/microservice-project.git 
+              cd charts/django-app
 
               sed -i "s/tag: .*/tag: $IMAGE_TAG/" values.yaml
 
